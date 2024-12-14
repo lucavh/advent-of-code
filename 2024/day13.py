@@ -7,22 +7,15 @@ def get_x_y(note):
     return tuple(map(int, coordinates[0]))
 
 
-def find_minimum_cost_path(a,b,p, scale_factor=1):
+def find_minimum_cost_path(a,b,p):
     problem = pulp.LpProblem("find_minimum_cost_path", pulp.LpMinimize)
 
     a_presses = pulp.LpVariable('A', lowBound=0, cat='Integer')
     b_presses = pulp.LpVariable('B', lowBound=0, cat='Integer')
 
     problem += a_presses * a[2] + b_presses * b[2], "total_cost"
-    
-    x = p[0] / scale_factor
-    y = p[1] / scale_factor
-    ax = a[0] / scale_factor
-    ay = a[1] / scale_factor
-    bx = b[0] / scale_factor
-    by = b[1] / scale_factor
-    problem += a_presses * ax + b_presses * bx == x, "X"
-    problem += a_presses * ay + b_presses * by == y, "Y"
+    problem += a_presses * a[0] + b_presses * b[0] == p[0], "X"
+    problem += a_presses * a[1] + b_presses * b[1] == p[1], "Y"
 
     problem.solve(pulp.PULP_CBC_CMD(msg=False))
 
